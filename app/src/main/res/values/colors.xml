@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#B71C1C</color>
+
+    <color name="colorAccent">#F05545</color>
+
+    <color name="colorPrimaryDark">#7F0000</color>
+
+    <color name="floating_print_button">#E91E1E</color>
+
+    <color name="floating_print">#236FBB</color>}
+
+    <color name="floating_compartir">#DA3F0C</color>
+
+    <color name="primaryTextColor">#FFFFFF</color>
+
+    <color name="secondaryTextColor">#000000</color>
+
+    <color name="colorfacebook">#3B5998</color>
+
+</resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BuildAttributionWarningsFilter">
+    <option name="noGCSettingWarning" value="true" />
+  </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/drawable/btn_fondo_color_blanco.xml" value="0.204" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/drawable/btn_fondo_colorred.xml" value="0.2703125" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/drawable/input.xml" value="0.2703125" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_configuracion.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_connection_settings.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_inicio_fash.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_inicio_sesion_new.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_menu_grub.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_pdf_view.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_registrar__series.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/activity_registrar_series_mac.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/dialog_pedir_serial.xml" value="0.34646739130434784" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/doabout.xml" value="0.34646739130434784" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/fragment_fragmen_folder.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/fragment_fragment_usuario.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/lista_dispositivos_bt.xml" value="0.34646739130434784" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/lista_series.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/lista_seriesymac.xml" value="0.34646739130434784" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/layout/model.xml" value="0.2598958333333333" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/menu/main_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/menu/main_menu_print.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/DMR/DMRPRINT/app/src/main/res/menu/navigation.xml" value="0.36666666666666664" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

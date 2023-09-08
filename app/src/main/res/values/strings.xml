@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">DMR Print</string>
+    <string name="title_sesion">Usuario</string>
+
+    <string name="configuracion">Configuración</string>
+    <string name="sesion">Cerrar Sesión</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- File Browser -->
+
+    <!-- About Menu -->
+    <string name="close_label">Close</string>
+    <string name="app_description">App para visualizar e Imprimir en impresoras Honeywell, Star Micronics, Hprt</string>
+    <string name="image_desc">dmrprintlogo3</string>
+
+    <!-- Main Activity -->
+    <string name="connection_not_configured">Connection settings not configured. Please configure connection settings.</string>
+
+    <string-array name="printHeadWidth_array">
+        <item>384 (2   plg)</item>
+        <item>490 (2.5 plg)</item>
+        <item>500 (2.8 plg)</item>
+        <item>576 (3   plg)</item>
+        <item>600 (3.2 plg)</item>
+        <item>750 (3.5 plg)</item>
+        <item>832 (4   plg)</item>
+
+
+    </string-array>
+
+    <string name="about">About</string>
+    <string-array name="connection_array">
+
+        <item>Bluetooth</item>
+        <item>TCP/IP</item>
+        <item>USB</item>
+
+    </string-array>
+
+
+    <string-array name="tipofiltro">
+        <item>EMAIL</item>
+        <item>MAC</item>
+        <item>SERIE</item>
+    </string-array>
+
+
+
+    <string-array name="printer_mode_array">
+
+        <item>Apex</item>
+        <item>DPL</item>
+        <item>CPCL</item>
+        <item>BIXOLON</item>
+        <item>TSC</item>
+        <item>ESCPOS</item>
+
+    </string-array>
+
+
+    <!-- Connection Settings -->
+    <string name="enter_mac">Please enter MAC Address:</string>
+    <string name="mac_hint">eg. AB:CD:EF:11:22:33 or ABCDEF112233</string>
+    <string name="enter_ip">Please enter IP Address of printer:</string>
+    <string name="ip_hint">eg. 192.168.99.1</string>
+    <string name="port">Port:</string>
+    <string name="port_hint">eg. 515</string>
+    <string name="BT_app_config_error">Application Error</string>
+    <string name="BT_app_config_error_message">Invalid port format. Please re-enter the port</string>
+
+    <!-- Preference Titles -->
+
+    <!-- Messages Preferences -->
+
+    <!-- Sync Preferences -->
+
+</resources>
