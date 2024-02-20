@@ -381,10 +381,27 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
             paramDPL = new ParametersDPL();
             paramExPCL_LP = new ParametersExPCL_LP();
             printData = new byte[]{0};
+
             // ICommandBuilder builder;
             switch (m_printerMode) {
 
                 case "Apex":
+
+                    mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
+                    if (mBitmap != null) {
+                        byte[] bitmapData = convertTo1BPP(mBitmap, 128);
+                        Bitmap bitt = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+                        docExPCL_LP.writeImage(bitt,m_printHeadWidth);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        printData = docExPCL_LP.getDocumentData();
+                    }
+
+                    /*
+                    Log.e("Tamano", String.valueOf(m_printHeadWidth));
                     docExPCL_LP.writePDF(ubicacionarchivo, m_printHeadWidth);
                     docExPCL_LP.writeText("", paramExPCL_LP);
                     docExPCL_LP.writeText("", paramExPCL_LP);
@@ -392,7 +409,11 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                     docExPCL_LP.writeText("", paramExPCL_LP);
                     docExPCL_LP.writeText("", paramExPCL_LP);
                     printData = docExPCL_LP.getDocumentData();
-                    //Toast.makeText(Pdf_view.this, "B", Toast.LENGTH_SHORT).show();
+
+                    Log.e("Tamano", String.valueOf(m_printHeadWidth));
+
+                    */
+
                     break;
 
                 case "DPL":
@@ -404,51 +425,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                     printData = docDPL.getDocumentData();
                     break;
 
-                case "StarPRNT":
-/*
-                    mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
-                    if (mBitmap != null) {
-                        builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.StarPRNT);
-                        byte[] bitmapData = convertTo1BPP(mBitmap, 128);
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-                        builder.beginDocument();
-                        builder.appendPeripheral(ICommandBuilder.PeripheralChannel.No1);
-                        builder.appendBitmap(bitmap, false, m_printHeadWidth, true);
-                        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
-                        builder.appendCutPaper(ICommandBuilder.CutPaperAction.PartialCutWithFeed);
-                        builder.endDocument();
-                        printData = builder.getCommands();
-
-
-                    } else {
-                        printData = new byte[0];
-                    }
-
-                    */
-                    break;
-
-                case "EscPosMobile":
-/*
-                    //  Drawable drawable = getResources().getDrawable(R.drawable.dologo);
-                    //   mBitmap = ((BitmapDrawable)drawable).getBitmap();
-                    mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
-                    if (mBitmap != null) {
-                        builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPosMobile);
-                        byte[] bitmapData = convertTo1BPP(mBitmap, 128);
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-                        builder.beginDocument();
-                        builder.appendPeripheral(ICommandBuilder.PeripheralChannel.No1);
-                        builder.appendBitmap(bitmap, false, m_printHeadWidth, true);
-                        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
-                        builder.appendCutPaper(ICommandBuilder.CutPaperAction.PartialCutWithFeed);
-                        builder.endDocument();
-                        printData = builder.getCommands();
-                    } else {
-                        printData = new byte[0];
-                    }
-
-                    */
-                    break;
 
                 case "CPCL":
 
@@ -461,22 +437,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
                     break;
 
-                    /*
-                case "PAX":
-                                        cargarIDALPax();
-                    if (pax){
-                        mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
-                        if (mBitmap != null) {
-                            byte[] bitmapData = convertTo1BPP(mBitmap, 128);
-                            Bitmap bitt = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-
-                            PrintPax(bitt);
-                        }
-                    }
-
-
-                                        break;
-                    */
 
                 case "TSC":
 
@@ -555,35 +515,18 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                             escCmd.append(escCmd.getEndCmd());
                             printBitmap = escCmd.getAppendCmds();
 
-                            int a = mBitmap != null ? mBitmap.getHeight() : 0;
-                            Log.e("TAMAÑO BITMAP"," " + a);
+                            EnableDialog(false, "Enviando terminando...", false);
 
-                            if  (timeout == 0){
-                                timeout = a * 14;
-                            }
-                                EnableDialog(false, "Enviando terminando...", false);
-
-                                Log.e("TAMAÑO seleccionado"," " + timeout);
-                                printESCPOSRUNTSC();
+                            Log.e("TAMAÑO seleccionado"," " + timeout);
+                            printESCPOSRUNTSC();
 
                             } catch (SdkException e) {
-
                                 EnableDialog(false, "Enviando terminando...", false);
                                 throw new RuntimeException(e);
                             }
 
-
-
                         }
                     }).start();
-
-
-
-
-
-                    //printEscposTestRunservice(ubicacionarchivo);
-
-               // printescposHprt(ubicacionarchivo);
 
 
 
@@ -610,127 +553,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
         }
 
     }
-
-    private void printEscposTestRunservice(String a) throws SdkException {
-
-        mServiceManager = new ServiceManager(getApplicationContext(), mHandlerer,  Looper.getMainLooper());
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-
-                    EnableDialog(true, "Imprimiendo test de prueba", true);
-
-                    CmdFactory escFac = new EscFactory();
-                    Cmd escCmd = escFac.create();
-                    escCmd.append(escCmd.getHeaderCmd());
-                    escCmd.setChartsetName("UTF-8");
-                    CommonSetting commonSetting = new CommonSetting();
-                    commonSetting.setAlign(CommonEnum.ALIGN_LEFT);
-                    escCmd.append(escCmd.getCommonSettingCmd(commonSetting));
-                    BitmapSetting bitmapSetting = new BitmapSetting();
-                    bitmapSetting.setBmpPrintMode(BmpPrintMode.MODE_SINGLE_COLOR);
-                    Bitmap mBitmap = generateImageFromPdf(a, 0, m_printHeadWidth);
-                    bitmapSetting.setBimtapLimitWidth(72 * 8);
-                    escCmd.append(escCmd.getBitmapCmd(bitmapSetting, mBitmap));
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getEndCmd());
-                    escCmd.append(escCmd.getBitmapCmd(bitmapSetting, mBitmap));
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getLFCRCmd());
-                    escCmd.append(escCmd.getEndCmd());
-
-                    printBitmap = escCmd.getAppendCmds();
-
-                    mServiceManager.connect(m_printerMAC, BXLCommonConst._PORT_BLUETOOTH);
-                    mServiceManager.Write(printBitmap);
-                    //mServiceManager.executeCommand("P" + 1 + "," + 1, false);
-
-
-                    EnableDialog(false, "Imprimiendo test de prueba", false);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    EnableDialog(false, "Imprimiendo test de prueba", false);
-                }
-            }
-        };
-        thread.start();
-
-    }
-
-
-    private void conversorESCPOS(Bitmap bmp, byte var1, byte var2, int var3) {
-
-    }
-
-
-    private void printescposHprt(String ubicacionarchivo) {
-
-
-
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                try {
-
-                    final int result = Print.PortOpen(getApplicationContext(), "Bluetooth," + m_printerMAC);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (result == 0){
-                                Log.e("bluettoh","conecto");
-                                mBitmap = generateImageFromPdf(ubicacionarchivo, 0, m_printHeadWidth);
-                                try {
-                                    int printImage = Print.PrintBitmap(mBitmap, 0, 0);
-
-                                } catch (Exception e) {
-                                    Log.e("print bmp","error");
-                                    e.printStackTrace();
-                                }
-
-                            }else{
-
-                                Log.e("bluettoh","no entro");
-                                //  NO CONECTO
-                            }
-
-                        }
-                    });
-
-                } catch (Exception e) {
-
-                }
-            }
-        }.start();
-
-
-    }
-
 
     private void printESCPOSRUNTSC() {
 
@@ -786,13 +608,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
     private ServiceManager mServiceManager;
     private void printBitmapBixolon(Bitmap bitmap) {
-/*
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inJustDecodeBounds = false;
-        opts.inSampleSize = 1;
-        opts.inPreferredConfig = Bitmap.Config.RGB_565;
-        bitmap = BitmapFactory.decodeFile(pathName, opts);
-*/
+
 
             mServiceManager = new ServiceManager(getApplicationContext(), mHandlerer,  Looper.getMainLooper());
 
@@ -831,7 +647,7 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
     }
 
     private void PrintBmpTsc() {
-        
+
 
         Thread thread = new Thread() {
             @Override
@@ -840,17 +656,9 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
                     EnableDialog(true, "Conectando Impresora...", true);
                     TscDll.openport(m_printerMAC);
-                    TscDll.downloadbmp("temp2.BMP");
                     TscDll.setup(wigth_calculator, heigth_calculator, 4, densidad, 0, 0, 0);
+                    TscDll.downloadbmp("temp2.BMP");
                     TscDll.clearbuffer();
-                    Log.e("TIMEOUT"," " + timeout);
-                    if  (timeout == 0){
-                        int a = mBitmap != null ? mBitmap.getHeight() : 0;
-                        Log.e("TAMAÑO"," " + a);
-                        timeout = a * 14;
-                    }
-
-
                     TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
                     TscDll.printlabel(1, 1);
                     TscDll.closeport(timeout);
@@ -874,48 +682,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
     }
 
 
-    /*
-    private void PrintPax(final Bitmap bbr) {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    EnableDialog(true, "Conectando Impresora...", true);
-
-                    try {
-                        printer.init();
-                    } catch (PrinterDevException e) {
-                        e.printStackTrace();
-                    }
-
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inScaled = true;
-
-                    try {
-                        printer.printBitmap(bbr);
-                    } catch (PrinterDevException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        final int status =  printer.start();
-
-                        Log.e("ESTATUS","" + status);
-                    } catch (PrinterDevException e) {
-                        e.printStackTrace();
-                    }
-
-
-
-                    EnableDialog(false, "Enviando Documento...", false);
-
-                } catch (Exception e) {
-
-                }
-            }
-        }).start();
-    }
-*/
-
 
     private void printPhotoFromExternal(final Bitmap bbr) {
         new Thread(new Runnable() {
@@ -925,12 +691,6 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                     Looper.prepare();
                     Connection connection = new BluetoothConnection(m_printerMAC);
                     connection.open();
-
-                    //ZebraPrinter printer = ZebraPrinterFactory.getInstance(connection);
-                    //ZebraPrinter  printer = ZebraPrinterFactory.getInstance(PrinterLanguage.CPCL, connection);
-                    //PrinterLanguage pclenguaje = printer.getPrinterControlLanguage();
-                    //System.out.println("Printer Control Language is " + pclenguaje);
-                    //GraphicsUtilCpcll.printImage(new ZebraImageAndroid(bbr), 0, 0, 0, 0, false);
 
                     ZebraImageAndroid imagenandroid = new ZebraImageAndroid(bbr);
 
@@ -1133,189 +893,13 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
 
     }
 
-    private void testescpos() {
-
-        new Thread(new Runnable() {
-            public void run() {
-                EnableDialog(true, "Enviando Documento...", true);
-
-                if (TscDll.openport(m_printerMAC).equals("1")){
-
-
-                    if (TscDll.sendcommand(printData).equals("1")){
-                        Log.e("SEND","datos enviados");
-
-                        if (cantidaddecopias==1){
-                            if (TscDll.sendcommand(printData).equals("1")){
-                                Log.e("SEND 2","datos enviados");
-                            }
-                        }
-                    }
-                }
-
-                if(TscDll.closeport().equals("1")){
-                    Log.e("CLOSE","Correcto");
-                }else{
-                    Log.e("CLOSE","InCorrecto");
-                }
-
-                EnableDialog(false, "Enviando terminando...", false);
-            }
-        }).start();
-    }
-
-
-    private void printescptest() {
-
-
-    }
-
-
-    private void escposprinttscrun() {
-
-        new Thread(new Runnable() {
-            public void run() {
-                EnableDialog(true, "Enviando Documento...", true);
-
-              //  btContent = str.getBytes("GBK");
-
-                if (TscDll.openport(m_printerMAC).equals("1")){
-
-
-
-
-                    /*
-                     escCmd.append(escCmd.getLFCRCmd());//espacios
-                        cmd.append("ESC @".getBytes(StandardCharsets.UTF_8));
-                        cmd.append("LF ".getBytes(StandardCharsets.UTF_8));
-                        cmd.append("LF ".getBytes(StandardCharsets.UTF_8));
-                        cmd.append("LF ".getBytes(StandardCharsets.UTF_8));
-                        cmd.append("LF ".getBytes(StandardCharsets.UTF_8));
-*/
-
-
-                      //  printespacio = cmd.getAppendCmds();
-
-                      //  TscDll.sendcommand(btStart);
-                      //  TscDll.sendcommand(cmd.getLFCRCmd());
-
-
-                   // TscDll.sendcommand("ESC @");
-               //  TscDll.sendcommand(printData).equals("1"))
-
-
-                        Log.e("SEND","datos enviados");
-/*
-                        if (cantidaddecopias==1){
-                            if (TscDll.sendcommand(printData).equals("1")){
-                                Log.e("SEND 2","datos enviados");
-                            }
-                         //   TscDll.sendcommand("ESC @");
-
-                        }
-                        */
-
-                    }
-
-                if(TscDll.closeport().equals("1")){
-                    Log.e("CLOSE","Correcto");
-                }else{
-                    Log.e("CLOSE","InCorrecto");
-                }
-
-                EnableDialog(false, "Enviando terminando...", false);
-            }
-        }).start();
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.e("Ondestroy", "cerro destroy");
-
-
     }
 
-    private void runEscPos(Bitmap bmp){
-
-        new Thread(new Runnable() {
-            public void run() {
-                    try {
-
-                        if (contador > 0) {
-                            EnableDialog(true, "Enviando Documento... reintentando", false);
-                        } else {
-                            EnableDialog(true, "Enviando Documento...", false);
-                        }
-                        contador++;
-                        conn = null;
-
-                        if (connectionType.equals("Bluetooth")) {
-                            Looper.prepare();
-                            conn = Connection_Bluetooth.createClient(m_printerMAC, false);
-                        }
-
-                        if (!conn.getIsOpen()) {
-                            if (conn.open()) {
-
-                                int bytesWritten = 0;
-                                int bytesToWrite = 1024;
-                                int totalBytes = printData.length;
-                                int remainingBytes = totalBytes;
-                                while (bytesWritten < totalBytes) {
-                                    if (remainingBytes < bytesToWrite)
-                                        bytesToWrite = remainingBytes;
-                                    //Send data, 1024 bytes at a time until all data sent
-                                    conn.write(printData, bytesWritten, bytesToWrite);
-                                    bytesWritten += bytesToWrite;
-                                    remainingBytes = remainingBytes - bytesToWrite;
-                                    Thread.sleep(100);
-                                }
-
-                                if (cantidaddecopias == 1) {
-                                    Thread.sleep(5000);
-                                    bytesWritten = 0;
-                                    bytesToWrite = 1024;
-                                    totalBytes = printData.length;
-                                    remainingBytes = totalBytes;
-                                    while (bytesWritten < totalBytes) {
-                                        if (remainingBytes < bytesToWrite)
-                                            bytesToWrite = remainingBytes;
-                                        conn.write(printData, bytesWritten, bytesToWrite);
-                                        bytesWritten += bytesToWrite;
-                                        remainingBytes = remainingBytes - bytesToWrite;
-                                        Thread.sleep(100);
-                                    }
-                                }
-
-                                DisplayPrintingStatusMessage("Impresión Exitosa. ");
-
-                                contador = 0;
-                                conn.close();
-
-                                EnableDialog(false, "cerrar", false);
-                                if (minimizarapp == 2) {
-                                    moveTaskToBack(true);
-                                }
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        if (conn != null) {
-                            conn.close();
-                        }
-                        e.printStackTrace();
-                        EnableDialog(false, "", false);
-                    }
-            }
-        }).start();
-
-
-
-    }
-
-
-    private String message;
 
     @Override
     public void run() {
@@ -1333,52 +917,54 @@ public class Pdf_view extends AppCompatActivity implements Runnable {
                 if (connectionType.equals("Bluetooth")) {
                     Looper.prepare();
                     conn = Connection_Bluetooth.createClient(m_printerMAC, false);
-                }
-                if (!conn.getIsOpen()) {
-                    if (conn.open()) {
 
-                        int bytesWritten = 0;
-                        int bytesToWrite = 1024;
-                        int totalBytes = printData.length;
-                        int remainingBytes = totalBytes;
-                        while (bytesWritten < totalBytes) {
-                            if (remainingBytes < bytesToWrite)
-                                bytesToWrite = remainingBytes;
-                            //Send data, 1024 bytes at a time until all data sent
-                            conn.write(printData, bytesWritten, bytesToWrite);
-                            bytesWritten += bytesToWrite;
-                            remainingBytes = remainingBytes - bytesToWrite;
-                            Thread.sleep(100);
-                        }
+                    if (!conn.getIsOpen()) {
+                        if (conn.open()) {
 
-                        if (cantidaddecopias == 1) {
-                            Thread.sleep(5000);
-                            bytesWritten = 0;
-                            bytesToWrite = 1024;
-                            totalBytes = printData.length;
-                            remainingBytes = totalBytes;
+                            int bytesWritten = 0;
+                            int bytesToWrite = 1024;
+                            int totalBytes = printData.length;
+                            int remainingBytes = totalBytes;
                             while (bytesWritten < totalBytes) {
                                 if (remainingBytes < bytesToWrite)
                                     bytesToWrite = remainingBytes;
+                                //Send data, 1024 bytes at a time until all data sent
                                 conn.write(printData, bytesWritten, bytesToWrite);
                                 bytesWritten += bytesToWrite;
                                 remainingBytes = remainingBytes - bytesToWrite;
                                 Thread.sleep(100);
                             }
-                        }
+
+                            if (cantidaddecopias == 1) {
+                                Thread.sleep(5000);
+                                bytesWritten = 0;
+                                bytesToWrite = 1024;
+                                totalBytes = printData.length;
+                                remainingBytes = totalBytes;
+                                while (bytesWritten < totalBytes) {
+                                    if (remainingBytes < bytesToWrite)
+                                        bytesToWrite = remainingBytes;
+                                    conn.write(printData, bytesWritten, bytesToWrite);
+                                    bytesWritten += bytesToWrite;
+                                    remainingBytes = remainingBytes - bytesToWrite;
+                                    Thread.sleep(100);
+                                }
+                            }
 
 
-                        DisplayPrintingStatusMessage("Impresión Exitosa. ");
+                            DisplayPrintingStatusMessage("Impresión Exitosa. ");
 
-                        contador = 0;
-                        conn.close();
-                        bandera = false;
-                        EnableDialog(false, "cerrar", false);
-                        if (minimizarapp == 2) {
-                            moveTaskToBack(true);
+                            contador = 0;
+                            conn.close();
+                            bandera = false;
+                            EnableDialog(false, "cerrar", false);
+                            if (minimizarapp == 2) {
+                                moveTaskToBack(true);
+                            }
                         }
                     }
                 }
+
 
             } catch (Exception e) {
                 //signals to close connection

@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
 
         final int ANDROID_NOUGAT = 24;
+
         if(Build.VERSION.SDK_INT >= ANDROID_NOUGAT)
         {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

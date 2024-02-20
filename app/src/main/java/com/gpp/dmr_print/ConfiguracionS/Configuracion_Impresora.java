@@ -58,11 +58,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.gpp.dmr_print.GRUB.MenuGRUB;
 import com.gpp.dmr_print.InicioFash;
+import com.gpp.dmr_print.MainActivity;
 import com.gpp.dmr_print.R;
 import com.rt.printerlibrary.cmd.Cmd;
 import com.rt.printerlibrary.cmd.EscFactory;
 import com.rt.printerlibrary.enumerate.BmpPrintMode;
+import com.rt.printerlibrary.exception.SdkException;
 import com.rt.printerlibrary.factory.cmd.CmdFactory;
 import com.rt.printerlibrary.setting.BitmapSetting;
 import com.shockwave.pdfium.PdfDocument;
@@ -209,13 +212,8 @@ private int timeout = 10000;
         mContext = this.getApplicationContext();
 
 
-        final int ANDROID_NOUGAT = 24;
-        if(Build.VERSION.SDK_INT >= ANDROID_NOUGAT)
-        {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         DMRPrintSettings appSettings = ReadApplicationSettingFromFile();
         if (appSettings != null) {
@@ -326,7 +324,6 @@ private int timeout = 10000;
                 //==================Open Connection Configuration Activity=======================================//
                 Intent connSettingsIntent = new Intent("com.gpp.dmr_print.ConfiguracionS.ConnectionSettingsActivity");
 
-
                 Spinner connectionSpinner = (Spinner) findViewById(R.id.connection_spinner);
                 String connectionType = connectionSpinner.getSelectedItem().toString();
                 connSettingsIntent.putExtra(CONNECTION_MODE_KEY, connectionType);
@@ -435,15 +432,17 @@ private int timeout = 10000;
                 docExPCL_LP = new DocumentExPCL_LP(3);
                 paramExPCL_LP = new ParametersExPCL_LP();
 
-                // Drawable drawable = getResources().getDrawable(R.drawable.testprint);
-                //mBitmap = ((BitmapDrawable) drawable).getBitmap();
 
                 if (!txtdensidad.getText().toString().isEmpty()){
 
                     timeout = Integer.parseInt(txttimeout.getText().toString());
                     densidad = Integer.parseInt(txtdensidad.getText().toString());
 
-                    if (densidad>= 0){
+                    if (timeout<1500){
+                        timeout=5000;
+                    }
+
+                    if (densidad>= 0 && timeout>0){
                         g_appSettings.setDensidad(densidad);
                         g_appSettings.setTimeout(timeout);
                         ValidarSerialMac();
@@ -454,7 +453,6 @@ private int timeout = 10000;
                 }else{
                     showDialog("No puede dejar la densidad en blanco");
                 }
-
 
             }
 
@@ -486,13 +484,13 @@ private int timeout = 10000;
     }
 
 
-
-
     private void initFireBase() {
 
         firebaseauth = FirebaseAuth.getInstance();
         firebasefirestore = FirebaseFirestore.getInstance();
         firebaseuser = firebaseauth.getCurrentUser();
+
+        mAuth = FirebaseAuth.getInstance();
 
         if (firebaseuser != null) {
             UIDEMAIL = firebaseuser.getEmail();
@@ -535,19 +533,10 @@ private int timeout = 10000;
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE_PERMISSION);
         }
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-            int readExternalPermission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writeExternalPermission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-            if (writeExternalPermission2 != PackageManager.PERMISSION_GRANTED || readExternalPermission2 != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE_PERMISSION);
-            }
-        }
-
-
     }
+    private FirebaseAuth mAuth;
+
+
 
     private void pedirserialequipo() {
 
@@ -561,54 +550,60 @@ private int timeout = 10000;
                 dialogo1.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
 
-                        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
-                        final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_pedir_serial, null);
-                        final AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c);
-                        alertDialogBuilderUserInput.setView(mView);
-                        final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                        if (mAuth.getCurrentUser().getEmail().equals("desarrollo@dmr.com.uy")){
+                            SaveApplicationSettingToFile();
+                        }else{
+                            LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
+                            final View mView = layoutInflaterAndroid.inflate(R.layout.dialog_pedir_serial, null);
+                            final AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c);
+                            alertDialogBuilderUserInput.setView(mView);
+                            final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
 
-                        alertDialogBuilderUserInput
-                                .setCancelable(false)
-                                .setPositiveButton("Validar", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialogBox, int id) {
-
-
-                                        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(Configuracion_Impresora.this);
-                                        dialogo1.setTitle("Importante");
-                                        dialogo1.setMessage("Confirme el numero de S/N  Con su impresora: " + userInputDialogEditText.getText().toString());
-                                        dialogo1.setCancelable(false);
-                                        dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialogo1, int id) {
-
-                                                EnableDialog(true, "Validando", "Validando número de serie");
-                                                validarSerialTablaFirebase(userInputDialogEditText.getText().toString());
-
-                                            }
-                                        });
-                                        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialogo1, int id) {
+                            alertDialogBuilderUserInput
+                                    .setCancelable(false)
+                                    .setPositiveButton("Validar", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialogBox, int id) {
 
 
-                                            }
-                                        });
-                                        dialogo1.show();
+                                            AlertDialog.Builder dialogo1 = new AlertDialog.Builder(Configuracion_Impresora.this);
+                                            dialogo1.setTitle("Importante");
+                                            dialogo1.setMessage("Confirme el numero de S/N  Con su impresora: " + userInputDialogEditText.getText().toString());
+                                            dialogo1.setCancelable(false);
+                                            dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialogo1, int id) {
+
+                                                    EnableDialog(true, "Validando", "Validando número de serie");
+                                                    validarSerialTablaFirebase(userInputDialogEditText.getText().toString());
+
+                                                }
+                                            });
+                                            dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialogo1, int id) {
 
 
-                                    }
-                                })
-
-                                .setNegativeButton("No",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialogBox, int id) {
-
-                                                dialogBox.cancel();
+                                                }
+                                            });
+                                            dialogo1.show();
 
 
-                                            }
-                                        });
+                                        }
+                                    })
 
-                        AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
-                        alertDialogAndroid.show();
+                                    .setNegativeButton("No",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialogBox, int id) {
+
+                                                    dialogBox.cancel();
+
+
+                                                }
+                                            });
+
+                            AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                            alertDialogAndroid.show();
+                        }
+
+
 
                     }
                 });
@@ -785,38 +780,27 @@ private int timeout = 10000;
 
                 case "ESCPOS":
 
-                        mBitmap = generateImageFromPdf(f.getPath(), 0, m_printHeadWidth, m_printerMode);
-                        if (mBitmap != null) {
-                            byte[] bitmapData2 = convertTo1BPP(mBitmap, 128);
-                            Bitmap bitt2 = BitmapFactory.decodeByteArray(bitmapData2, 0, bitmapData2.length);
-                            CmdFactory cmdFactory = new EscFactory();
-                            Cmd cmd = cmdFactory.create();
-                            BitmapSetting bitmapSetting = new BitmapSetting();
-                            bitmapSetting.setBmpPrintMode(BmpPrintMode.MODE_SINGLE_COLOR);
-                            bitmapSetting.setBimtapLimitWidth(72 * 8);
-                            cmd.append(cmd.getBitmapCmd(bitmapSetting, bitt2));
-                            cmd.append(cmd.getLFCRCmd());
-                            cmd.append(cmd.getLFCRCmd());
-                            cmd.append(cmd.getLFCRCmd());
-                            cmd.append(cmd.getLFCRCmd());
-                            printData = cmd.getAppendCmds();
-                            printtscrun();
-                        }
+
+                    printtscrun(f);
+
 
                     break;
 
                 case "Apex":
 
-                    docExPCL_LP.writePDF(f.getPath(), m_printHeadWidth);
-                    docExPCL_LP.writeText("                        ");
-                    docExPCL_LP.writeText("                        ");
-                    docExPCL_LP.writeText("                        ");
-                    docExPCL_LP.writeText("                        ");
-                    docExPCL_LP.writeText("                        ");
-                    docExPCL_LP.writeText("                        ");
-                    docExPCL_LP.writeText("                        ");
-                    docExPCL_LP.writeText("                        ");
-                    printData = docExPCL_LP.getDocumentData();
+                    mBitmap = generateImageFromPdf(f.getPath(), 0, m_printHeadWidth, m_printerMode);
+                    if (mBitmap != null) {
+                        byte[] bitmapData3 = convertTo1BPP(mBitmap, 128);
+                        Bitmap bitt3 = BitmapFactory.decodeByteArray(bitmapData3, 0, bitmapData3.length);
+                        docExPCL_LP.writeImage(bitt3,m_printHeadWidth);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        docExPCL_LP.writeText("  ", paramExPCL_LP);
+                        printData = docExPCL_LP.getDocumentData();
+                    }
+
                     break;
 
                 case "DPL":
@@ -841,6 +825,7 @@ private int timeout = 10000;
                     break;
 
                 case "TSC":
+
                try {
                         mBitmap = generateImageFromPdf(f.getPath(), 0, m_printHeadWidth,m_printerMode);
                         heigth_calculator = (int) (mBitmap.getHeight() / 8);
@@ -859,14 +844,6 @@ private int timeout = 10000;
                         fos.write(buffer);
                         fos.close();
 
-                        Log.e("TIMEOUT"," " + timeout);
-                        timeout = Integer.parseInt(txttimeout.getText().toString());
-                        if  (timeout == 0){
-                               int a = mBitmap != null ? mBitmap.getHeight() : 0;
-                               Log.e("TAMAÑO"," " + a);
-                               timeout = a * 14;
-                        }
-
                         PrintBmpTsc();
 
                     } catch (IOException e) {
@@ -875,29 +852,6 @@ private int timeout = 10000;
 
                     break;
 
-                case "EscPosMobile":
-                    showToast("Está Deshabilitada esta función");
-
-                    /*
-                    mBitmap = generateImageFromPdf(f.getPath(), 0, m_printHeadWidth);
-                    if (mBitmap != null) {
-                        builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPosMobile);
-                        byte[] bitmapData = convertTo1BPP(mBitmap,128);
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-                        builder.beginDocument();
-                        builder.appendPeripheral(ICommandBuilder.PeripheralChannel.No1);
-                        builder.appendBitmap(bitmap, false, m_printHeadWidth, true);
-                        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
-                        builder.appendCutPaper(ICommandBuilder.CutPaperAction.PartialCutWithFeed);
-                        builder.endDocument();
-                        printData = builder.getCommands();
-                    } else {
-                        printData = new byte[0];
-                    }
-
-                    */
-
-                    break;
             }
 
             if (m_printerMode.equals("Apex") || (m_printerMode.equals("DPL") )) {
@@ -919,7 +873,7 @@ private int timeout = 10000;
 
     }
 
-    private void printtscrun() {
+    private void printtscrun(File f) {
 
 
         Thread thread = new Thread() {
@@ -930,21 +884,24 @@ private int timeout = 10000;
                     EnableDialog(true, "Enviando Documento...","ESCPOS");
 
 
-                    if (TscDll.openport(m_printerMAC).equals("1")){
+                        mBitmap = generateImageFromPdf(f.getPath(), 0, m_printHeadWidth, m_printerMode);
+                        if (mBitmap != null) {
+                            byte[] bitmapData2 = convertTo1BPP(mBitmap, 128);
+                            Bitmap bitt2 = BitmapFactory.decodeByteArray(bitmapData2, 0, bitmapData2.length);
+                            CmdFactory cmdFactory = new EscFactory();
+                            Cmd cmd = cmdFactory.create();
+                            BitmapSetting bitmapSetting = new BitmapSetting();
+                            bitmapSetting.setBmpPrintMode(BmpPrintMode.MODE_SINGLE_COLOR);
+                            bitmapSetting.setBimtapLimitWidth(72 * 8);
+                            cmd.append(cmd.getBitmapCmd(bitmapSetting, bitt2));
+                            printData = cmd.getAppendCmds();
 
-                        if (TscDll.sendcommand(printData).equals("1")){
-
-
+                            TscDll.openport(m_printerMAC);
+                            TscDll.sendcommand(printData);
+                            TscDll.closeport(timeout);
+                            pedirserialequipo();
                         }
 
-                    }
-
-                    TscDll.closeport(10000);
-
-
-                    pedirserialequipo();
-
-                    //SaveApplicationSettingToFile();
                     EnableDialog(false, "Enviando terminando...","ESCPOS");
 
                 } catch (Exception e) {
@@ -1024,8 +981,11 @@ private int timeout = 10000;
 
                     EnableDialog(true, "Imprimiendo test de prueba", "Imprimiendo");
                     TscDll.openport(m_printerMAC);
-                    TscDll.downloadbmp("temp2.BMP");
                     TscDll.setup(wigth_calculator, heigth_calculator, 4, densidad, 0, 0, 0);
+                    TscDll.downloadbmp("temp2.BMP");
+
+
+
                     TscDll.clearbuffer();
                     TscDll.sendcommand("PUTBMP 10,10,\"temp2.BMP\"\n");
                     TscDll.printlabel(1, 1);
@@ -1060,11 +1020,6 @@ private int timeout = 10000;
                     Connection connection = new BluetoothConnection(m_printerMAC);
                     connection.open();
 
-                    //ZebraPrinter printer = ZebraPrinterFactory.getInstance(connection);
-                    //ZebraPrinter  printer = ZebraPrinterFactory.getInstance(PrinterLanguage.CPCL, connection);
-                    //PrinterLanguage pclenguaje = printer.getPrinterControlLanguage();
-                    //System.out.println("Printer Control Language is " + pclenguaje);
-                    //GraphicsUtilCpcll.printImage(new ZebraImageAndroid(bbr), 0, 0, 0, 0, false);
 
                     ZebraImageAndroid imagenandroid = new ZebraImageAndroid(bbr);
 
@@ -1101,8 +1056,7 @@ private int timeout = 10000;
                         connection.write("\r\n".getBytes());
                         connection.write(var11.getBytes());
 
-                        // pedirserialequipo();
-                        SaveApplicationSettingToFile();
+                         pedirserialequipo();
 
                     } catch (Exception var14) {
                         throw new ConnectionException(var14.getMessage());

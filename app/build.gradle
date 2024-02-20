@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdk 31
+    compileSdk 34
     defaultConfig {
         applicationId "com.gpp.dmr_print"
         minSdkVersion 25
-        versionCode 25
-        versionName "25.1"
+        versionCode 27
+        versionName "27.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -31,18 +31,9 @@ android {
         }
     }
 
-    signingConfigs {
-        release {
-            storeFile file('key/com.pax.innov.apk.sign')
-            storePassword 'com.pax.innov.apk.sign'
-            keyAlias 'com.pax.innov.apk.sign'
-            keyPassword 'com.pax.innov.apk.sign'
-        }
-    }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
